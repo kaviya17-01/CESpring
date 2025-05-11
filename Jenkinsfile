@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'kaviya1701/course-enrollment-app'
-        JAVA_OPTS = "-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL=86400"
+        IMAGE_NAME = 'kaviya1701/course-enrollment-app:latest'
     }
 
     stages {
@@ -15,7 +14,9 @@ pipeline {
 
         stage('Build with Maven') {
             steps {
-                sh 'mvn clean package -DskipTests=true -Dmaven.test.skip=true'
+                timeout(time: 10, unit: 'MINUTES') {
+                    sh 'mvn clean package -DskipTests=true -Dmaven.test.skip=true'
+                }
             }
         }
 
@@ -36,7 +37,7 @@ pipeline {
 
         stage('Run Container (Optional)') {
             steps {
-                sh 'docker run -d -p 8080:8080 $IMAGE_NAME'
+                sh 'docker run --rm -d -p 8080:8080 $IMAGE_NAME'
             }
         }
     }
@@ -52,9 +53,10 @@ pipeline {
         }
 
         failure {
-            echo ' Pipeline failed. Check the logs.'
+            echo 'Pipeline failed. Check the logs.'
         }
     }
 }
+
 
 
