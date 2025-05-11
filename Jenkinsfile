@@ -15,34 +15,28 @@ pipeline {
 
         stage('Build with Maven') {
             steps {
-                dir('CourseEnrollment') {
-                    sh 'mvn clean package -DskipTests=true -Dmaven.test.skip=true'
-                }
+                sh 'mvn clean package -DskipTests=true -Dmaven.test.skip=true'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                dir('CourseEnrollment') {
-                    sh 'docker build -t $IMAGE_NAME .'
-                }
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                dir('CourseEnrollment') {
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                        sh 'docker push $IMAGE_NAME'
-                    }
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh 'docker push $IMAGE_NAME'
                 }
             }
         }
 
         stage('Run Container (Optional)') {
             steps {
-                sh 'docker run -d -p 8081:8081 $IMAGE_NAME'
+                sh 'docker run -d -p 8080:8080 $IMAGE_NAME'
             }
         }
     }
@@ -62,4 +56,5 @@ pipeline {
         }
     }
 }
+
 
