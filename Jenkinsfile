@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/kaviya17-01/CourseEnrollmentSpringBoot.git'
+                git branch: 'main', url: 'https://github.com/kaviya17-01/CESpring.git'
             }
         }
 
@@ -42,7 +42,7 @@ pipeline {
 
         stage('Run Container (Optional)') {
             steps {
-                sh 'docker run -d -p 8080:8080 $IMAGE_NAME'
+                sh 'docker run -d -p 8081:8081 $IMAGE_NAME'
             }
         }
     }
@@ -54,11 +54,11 @@ pipeline {
         }
 
         success {
-            echo '✅ Pipeline completed successfully!'
+            echo 'Pipeline completed successfully!'
         }
 
         failure {
-            echo '❌ Pipeline failed. Check the logs.'
+            echo ' Pipeline failed. Check the logs.'
         }
     }
 }
